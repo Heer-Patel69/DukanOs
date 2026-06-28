@@ -25,7 +25,7 @@ export function ProductDetail({ product, onClose, onEdit }: Props) {
   const reorder = () => {
     if (!supplier) return;
     const msg = encodeURIComponent(
-      `🔄 Reorder Request\n\nProduct: ${product.name}\nSKU: ${product.sku}\nCurrent Stock: ${product.stock}\nSuggested Qty: ${Math.max(10, (product.reorderLevel ?? 5) * 3)}\n\n— Sent from DukaanOS`
+      `🔄 Reorder Request\n\nProduct: ${product.name}\nSKU: ${product.sku}\nCurrent Stock: ${product.stock}\nSuggested Qty: ${Math.max(10, (product.reorderLevel ?? 5) * 3)}\n\n— Sent from DukanOs`
     );
     window.open(`https://wa.me/${supplier.phone.replace(/\D/g, "")}?text=${msg}`, "_blank");
   };

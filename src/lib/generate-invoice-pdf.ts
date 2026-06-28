@@ -72,7 +72,7 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<jsPDF> {
 
   // Fetch store profile for dynamic header
   const store = await getStoreProfile();
-  const storeName = store?.name || "SHREE UMIYA ELECTRONICS";
+  const storeName = store?.name || "DUKANOS BUSINESS";
   const storeAddress = store?.address || "Shop No. 5, Sargasan Cross Road, Gandhinagar - 382421, Gujarat";
   const storePhone = store?.phone || "+91 99999 99999";
   const storeWhatsApp = store?.whatsapp || storePhone;
@@ -485,7 +485,7 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<jsPDF> {
   doc.setFont("helvetica", "bold");
   doc.setFontSize(7);
   setColor(doc, 90, 98, 120);
-  doc.text("Thank you for choosing " + (store?.name || "Shree Umiya Electronics") + "!", w / 2, y, { align: "center" });
+  doc.text("Thank you for choosing " + (store?.name || "DukanOs Business") + "!", w / 2, y, { align: "center" });
   y += 4;
 
   doc.setFont("helvetica", "normal");
@@ -505,7 +505,7 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<jsPDF> {
   doc.setProperties({
     title: "Invoice " + data.invoiceId,
     subject: "Invoice for " + data.customerName,
-    creator: store?.name || "DukaanOS",
+    creator: store?.name || "DukanOs",
   });
 
   return doc;

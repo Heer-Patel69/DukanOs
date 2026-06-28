@@ -57,7 +57,7 @@ export default function Index() {
         <div className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <img src={umiyaLogo} alt="DukaaanOS" className="h-8 w-8 rounded-xl shrink-0" />
-            <span className="font-brand text-base tracking-wide text-foreground">DukaanOS</span>
+            <span className="font-brand text-base tracking-wide text-foreground">DukanOs</span>
           </div>
           <div className="hidden md:flex items-center gap-6 text-sm text-muted-foreground">
             <a href="#features" className="hover:text-foreground transition-colors">Features</a>
@@ -157,7 +157,7 @@ export default function Index() {
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }} variants={stagger} className="text-center mb-10">
           <motion.p variants={fadeUp} custom={0} className="text-accent font-bold text-xs uppercase tracking-[0.3em] mb-2">Built For</motion.p>
           <motion.h2 variants={fadeUp} custom={1} className="font-brand text-3xl md:text-5xl text-foreground">EVERY LOCAL BUSINESS</motion.h2>
-          <motion.p variants={fadeUp} custom={2} className="text-muted-foreground mt-3 max-w-md mx-auto text-sm">No matter what you sell or repair — DukaanOS adapts to your business type.</motion.p>
+          <motion.p variants={fadeUp} custom={2} className="text-muted-foreground mt-3 max-w-md mx-auto text-sm">No matter what you sell or repair — DukanOs adapts to your business type.</motion.p>
         </motion.div>
 
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger}
@@ -272,7 +272,7 @@ export default function Index() {
               <Zap className="h-5 w-5" />
               Start Free — No Card Needed
             </button>
-            <a href="https://wa.me/919999999999?text=Hi%2C%20I%20want%20to%20know%20about%20DukaanOS"
+            <a href="https://wa.me/919999999999?text=Hi%2C%20I%20want%20to%20know%20about%20DukanOs"
               target="_blank" rel="noopener noreferrer"
               className="glass text-foreground font-semibold py-3.5 px-8 rounded-2xl flex items-center justify-center gap-2 active:scale-[0.97] transition-all">
               <MessageCircle className="h-4 w-4 text-brand-success" />
@@ -288,14 +288,14 @@ export default function Index() {
           <div className="flex items-center gap-2.5">
             <img src={umiyaLogo} alt="" className="h-7 w-7 rounded-lg shrink-0" />
             <div>
-              <p className="font-brand text-sm text-foreground">DukaanOS</p>
+              <p className="font-brand text-sm text-foreground">DukanOs</p>
               <p className="text-[10px] text-muted-foreground">Business OS for Indian Shops</p>
             </div>
           </div>
           <div className="flex items-center gap-4 text-xs text-muted-foreground/50">
             <button onClick={() => navigate("/stores")} className="hover:text-foreground transition-colors">Stores</button>
             <span>•</span>
-            <span>© 2025 DukaanOS. All rights reserved.</span>
+            <span>© 2025 DukanOs. All rights reserved.</span>
           </div>
         </div>
       </footer>

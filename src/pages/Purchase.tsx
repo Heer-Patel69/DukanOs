@@ -103,7 +103,7 @@ export default function Purchase() {
     if (!supplier?.phone) return toast.error("No supplier phone");
     const itemLines = po.items.map(i => `- ${i.name} (${i.sku}) x ${i.qty}`).join("\n");
     const msg = encodeURIComponent(
-      `Reorder Request from Shree Umiya Electronics\n\n${itemLines}\n\nTotal: ₹${po.total.toLocaleString("en-IN")}\n\nPlease confirm availability and delivery.\n\n— Sent from DukaanOS`
+      `Reorder Request from DukanOs\n\n${itemLines}\n\nTotal: ₹${po.total.toLocaleString("en-IN")}\n\nPlease confirm availability and delivery.\n\n— Sent from DukanOs`
     );
     const phone = supplier.phone.replace(/\D/g, "");
     window.open(`https://wa.me/${phone}?text=${msg}`, "_blank");

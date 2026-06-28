@@ -8,7 +8,7 @@ import { initDB, startSyncService } from "./lib/offline-db.ts";
 
 // Initialize IndexedDB and start background sync
 initDB().then(() => {
-  console.log("[DukaanOS] Offline database ready");
+  console.log("[DukanOs] Offline database ready");
   startSyncService();
 });
 

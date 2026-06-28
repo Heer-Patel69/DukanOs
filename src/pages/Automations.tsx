@@ -64,7 +64,7 @@ export default function Automations() {
     const msg = reminder.message
       .replace("{name}", reminder.customerName)
       .replace("{device}", reminder.deviceInfo || "device")
-      .replace("{store}", profile?.name || "DukaanOS")
+      .replace("{store}", profile?.name || "DukanOs")
       .replace("{amount}", "");
     const url = `https://wa.me/${reminder.customerPhone.replace(/[\s+]/g, "")}?text=${encodeURIComponent(msg)}`;
     window.open(url, "_blank");
@@ -184,7 +184,7 @@ export default function Automations() {
           <NewReminderModal
             customers={customers}
             templates={TEMPLATES}
-            storeName={profile?.name || "DukaanOS"}
+            storeName={profile?.name || "DukanOs"}
             onClose={() => setShowNew(false)}
             onSave={(r) => { add(r); setShowNew(false); toast.success("Reminder created"); }}
           />

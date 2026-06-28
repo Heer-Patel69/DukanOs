@@ -1,122 +1,147 @@
 import { useState } from "react";
 import { PageShell } from "@/components/layout/PageShell";
-import { User, Bell, Shield, Palette, Database, HelpCircle, ChevronRight, Plus, X, Trash2 } from "lucide-react";
+import { User, Bell, Palette, Database, HelpCircle, ChevronRight, Save, LogOut, Download } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
-import { supabase, isSupabaseConfigured } from "@/integrations/supabase/client";
+import { useStoreProfile } from "@/hooks/use-offline-store";
+import { useSales } from "@/hooks/use-offline-store";
 import { toast } from "sonner";
 
-interface StaffMember {
-  id: string;
-  email: string;
-  role: string;
-  status: "active" | "pending";
-}
-
-const settingsGroups = [
-  { icon: User, label: "Business Profile", desc: "Name, address, GST details" },
-  { icon: Bell, label: "Notifications", desc: "Alerts, reminders, AMC" },
-  { icon: Palette, label: "Invoice Template", desc: "Logo, header, footer" },
-  { icon: Database, label: "Data & Backup", desc: "Export CSV, backup" },
-  { icon: HelpCircle, label: "Help & Support", desc: "FAQ, contact us" },
-];
-
 export default function SettingsPage() {
-  const { role, isConfigured } = useAuth();
-  const [showStaff, setShowStaff] = useState(false);
-  const [staffList] = useState<StaffMember[]>([]);
-  const [inviteEmail, setInviteEmail] = useState("");
-  const [inviteRole, setInviteRole] = useState("cashier");
+  const { user, signOut } = useAuth();
+  const { profile, save } = useStoreProfile();
+  const { items: sales } = useSales();
+  const [showProfile, setShowProfile] = useState(true);
+  const [form, setForm] = useState({
+    name: profile?.name ?? "",
+    address: profile?.address ?? "",
+    city: profile?.city ?? "",
+    phone: profile?.phone ?? "",
+    whatsapp: profile?.whatsapp ?? "",
+    gstin: (profile as { gstin?: string })?.gstin ?? "",
+    mapsUrl: (profile as { mapsUrl?: string })?.mapsUrl ?? "",
+  });
 
-  const handleInvite = async () => {
-    if (!inviteEmail) return;
-    // In a real app, this would create an invite in Supabase
-    toast.success(`Invite sent to ${inviteEmail} as ${inviteRole}`);
-    setInviteEmail("");
+  const saveProfile = async () => {
+    await save({
+      id: "default",
+      name: form.name || "My Business",
+      slug: (form.name || "my-business").toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+      address: form.address,
+      city: form.city,
+      phone: form.phone,
+      whatsapp: form.whatsapp || form.phone,
+      categories: profile?.categories ?? [],
+      isOpen: true,
+      // Phase 0 additions, stored alongside legacy schema
+      ...(form.gstin ? { gstin: form.gstin } : {}),
+      ...(form.mapsUrl ? { mapsUrl: form.mapsUrl } : {}),
+    } as Parameters<typeof save>[0]);
+    toast.success("Business profile saved");
   };
 
+  const exportCsv = () => {
+    const rows = [["Invoice", "Customer", "Phone", "Amount", "Paid", "Status", "Date"]];
+    for (const s of sales) {
+      rows.push([s.id, s.customer, s.customerPhone || "", String(s.amount), String(s.paidAmount), s.status, s.date]);
+    }
+    const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `dukanos-bills-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success(`Exported ${sales.length} bills`);
+  };
+
+  const simpleRows = [
+    { icon: Bell, label: "Reminders", desc: "Auto follow-ups for udhaar & AMC" },
+    { icon: Palette, label: "Invoice Template", desc: "Simple, Professional/GST, Branded" },
+    { icon: HelpCircle, label: "Help & Support", desc: "FAQ, contact us" },
+  ];
+
   return (
-    <PageShell title="Settings" subtitle="App configuration">
+    <PageShell title="Settings" subtitle="DukanOs configuration">
       <div className="space-y-2">
-        {/* Staff & Roles — expanded section */}
-        <button onClick={() => setShowStaff(!showStaff)}
-          className="w-full glass rounded-2xl p-4 flex items-center gap-3 active:scale-[0.99] transition-all hover:bg-card/70 text-left group">
-          <div className="h-10 w-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-            <Shield className="h-5 w-5 text-primary" />
+        {/* Business Profile */}
+        <button onClick={() => setShowProfile(!showProfile)}
+          className="w-full glass rounded-2xl p-4 flex items-center gap-3 active:scale-[0.99] transition-all hover:bg-card/70 text-left">
+          <div className="h-10 w-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0">
+            <User className="h-5 w-5 text-primary" />
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-foreground">Staff & Roles</p>
-            <p className="text-xs text-muted-foreground">Owner, staff access</p>
+          <div className="flex-1">
+            <p className="text-sm font-semibold text-foreground">Business Profile</p>
+            <p className="text-xs text-muted-foreground">Name, address, GST — auto-fills every bill</p>
           </div>
-          <ChevronRight className={`h-4 w-4 text-muted-foreground/50 flex-shrink-0 transition-transform ${showStaff ? "rotate-90" : ""}`} />
+          <ChevronRight className={`h-4 w-4 text-muted-foreground/50 transition-transform ${showProfile ? "rotate-90" : ""}`} />
         </button>
 
-        {showStaff && (
+        {showProfile && (
           <div className="glass rounded-2xl p-4 space-y-3 ml-2 border-l-2 border-primary/20">
-            {!isConfigured ? (
-              <p className="text-xs text-muted-foreground">Connect Supabase to enable staff management.</p>
-            ) : (
-              <>
-                <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Your Role: <span className="text-primary font-bold">{role}</span></p>
-
-                {/* Invite form */}
-                {role === "owner" && (
-                  <div className="flex gap-2">
-                    <input type="email" placeholder="staff@email.com" value={inviteEmail} onChange={(e) => setInviteEmail(e.target.value)}
-                      className="flex-1 px-3 py-2 rounded-xl bg-card border border-border/50 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50" />
-                    <select value={inviteRole} onChange={(e) => setInviteRole(e.target.value)}
-                      className="px-2 py-2 rounded-xl bg-card border border-border/50 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary/50">
-                      <option value="cashier">Cashier</option>
-                      <option value="technician">Technician</option>
-                    </select>
-                    <button onClick={handleInvite}
-                      className="px-3 rounded-xl bg-primary/10 text-primary text-sm font-semibold active:scale-95 transition-transform">
-                      <Plus className="h-4 w-4" />
-                    </button>
-                  </div>
-                )}
-
-                {/* Staff list */}
-                {staffList.length === 0 ? (
-                  <p className="text-xs text-muted-foreground/60 text-center py-4">No staff members yet</p>
-                ) : (
-                  staffList.map((s) => (
-                    <div key={s.id} className="flex items-center gap-3 py-2 border-b border-border/20 last:border-0">
-                      <div className="h-8 w-8 rounded-lg bg-secondary flex items-center justify-center text-xs font-bold text-muted-foreground">
-                        {s.email[0].toUpperCase()}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm text-foreground truncate">{s.email}</p>
-                        <p className="text-[10px] text-muted-foreground capitalize">{s.role} • {s.status}</p>
-                      </div>
-                    </div>
-                  ))
-                )}
-
-                <div className="glass rounded-xl p-3 mt-2">
-                  <p className="text-[10px] text-muted-foreground">
-                    <strong>Cashier:</strong> POS + Sales only<br />
-                    <strong>Technician:</strong> Job Cards only<br />
-                    <strong>Owner:</strong> Full access
-                  </p>
-                </div>
-              </>
-            )}
+            <Field label="Business Name" value={form.name} onChange={v => setForm({ ...form, name: v })} placeholder="e.g., Patel Kirana" />
+            <Field label="Address" value={form.address} onChange={v => setForm({ ...form, address: v })} placeholder="Shop No, Street, Area" />
+            <div className="grid grid-cols-2 gap-2">
+              <Field label="City" value={form.city} onChange={v => setForm({ ...form, city: v })} placeholder="Ahmedabad" />
+              <Field label="Phone" value={form.phone} onChange={v => setForm({ ...form, phone: v })} placeholder="+91 98xxx xxxxx" />
+            </div>
+            <Field label="GSTIN (optional)" value={form.gstin} onChange={v => setForm({ ...form, gstin: v })} placeholder="22AAAAA0000A1Z5" />
+            <Field label="Google Maps Link (optional)" value={form.mapsUrl} onChange={v => setForm({ ...form, mapsUrl: v })} placeholder="https://maps.app.goo.gl/..." />
+            <button onClick={saveProfile} className="w-full gradient-accent text-accent-foreground py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 active:scale-[0.98] transition-all">
+              <Save className="h-4 w-4" /> Save Profile
+            </button>
           </div>
         )}
 
-        {settingsGroups.map((item) => (
-          <button key={item.label} className="w-full glass rounded-2xl p-4 flex items-center gap-3 active:scale-[0.99] transition-all hover:bg-card/70 text-left group">
-            <div className="h-10 w-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+        {/* Backup & Export */}
+        <button onClick={exportCsv}
+          className="w-full glass rounded-2xl p-4 flex items-center gap-3 active:scale-[0.99] transition-all hover:bg-card/70 text-left">
+          <div className="h-10 w-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0">
+            <Database className="h-5 w-5 text-primary" />
+          </div>
+          <div className="flex-1">
+            <p className="text-sm font-semibold text-foreground">Backup & Export</p>
+            <p className="text-xs text-muted-foreground">Download all bills as CSV ({sales.length} records)</p>
+          </div>
+          <Download className="h-4 w-4 text-primary" />
+        </button>
+
+        {simpleRows.map((item) => (
+          <button key={item.label} className="w-full glass rounded-2xl p-4 flex items-center gap-3 active:scale-[0.99] transition-all hover:bg-card/70 text-left">
+            <div className="h-10 w-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0">
               <item.icon className="h-5 w-5 text-primary" />
             </div>
-            <div className="flex-1 min-w-0">
+            <div className="flex-1">
               <p className="text-sm font-semibold text-foreground">{item.label}</p>
               <p className="text-xs text-muted-foreground">{item.desc}</p>
             </div>
-            <ChevronRight className="h-4 w-4 text-muted-foreground/50 flex-shrink-0" />
+            <ChevronRight className="h-4 w-4 text-muted-foreground/50" />
           </button>
         ))}
+
+        {user && (
+          <button onClick={signOut}
+            className="w-full glass rounded-2xl p-4 flex items-center gap-3 active:scale-[0.99] transition-all hover:bg-destructive/5 text-left mt-4">
+            <div className="h-10 w-10 rounded-xl bg-destructive/10 border border-destructive/20 flex items-center justify-center flex-shrink-0">
+              <LogOut className="h-5 w-5 text-destructive" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-destructive">Sign Out</p>
+              <p className="text-xs text-muted-foreground">{user.email}</p>
+            </div>
+          </button>
+        )}
       </div>
     </PageShell>
+  );
+}
+
+function Field({ label, value, onChange, placeholder }: { label: string; value: string; onChange: (v: string) => void; placeholder?: string }) {
+  return (
+    <div>
+      <label className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-1 block">{label}</label>
+      <input value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder}
+        className="w-full px-3 py-2 rounded-xl bg-card border border-border/50 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50" />
+    </div>
   );
 }

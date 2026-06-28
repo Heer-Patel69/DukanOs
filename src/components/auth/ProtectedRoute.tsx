@@ -2,10 +2,7 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth";
 
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { user, loading, isConfigured } = useAuth();
-
-  // If Supabase isn't configured, allow access (local-only mode)
-  if (!isConfigured) return <>{children}</>;
+  const { user, loading } = useAuth();
 
   if (loading) {
     return (

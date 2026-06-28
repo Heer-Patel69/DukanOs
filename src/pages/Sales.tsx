@@ -70,7 +70,7 @@ export default function Sales() {
     const remaining = sale.amount - sale.paidAmount;
     const ph = sale.customerPhone.replace(/\D/g, "");
     const msg = encodeURIComponent(
-      `🧾 Invoice ${sale.id}\nTotal: ₹${sale.amount.toLocaleString("en-IN")}\nPaid: ₹${sale.paidAmount.toLocaleString("en-IN")}\n${remaining > 0 ? `Balance: ₹${remaining.toLocaleString("en-IN")}${sale.paymentLink ? `\n\n💳 Pay Online: ${sale.paymentLink}` : ""}` : "✅ Fully Paid"}\n\n— Shree Umiya Electronics`
+      `🧾 Invoice ${sale.id}\nTotal: ₹${sale.amount.toLocaleString("en-IN")}\nPaid: ₹${sale.paidAmount.toLocaleString("en-IN")}\n${remaining > 0 ? `Balance: ₹${remaining.toLocaleString("en-IN")}${sale.paymentLink ? `\n\n💳 Pay Online: ${sale.paymentLink}` : ""}` : "✅ Fully Paid"}\n\n— DukanOs`
     );
     window.open(ph ? `https://wa.me/${ph}?text=${msg}` : `https://wa.me/?text=${msg}`, "_blank");
   };

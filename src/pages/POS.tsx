@@ -214,7 +214,7 @@ export default function POS() {
     if (data.customerPhone) {
       const ph = data.customerPhone.replace(/\D/g, "");
       const msg = encodeURIComponent(
-        `🧾 Invoice ${invoiceId}\nTotal: ₹${total.toLocaleString("en-IN")}\nPaid: ₹${data.paidAmount.toLocaleString("en-IN")}\n${status !== "Paid" ? `Balance: ₹${(total - data.paidAmount).toLocaleString("en-IN")}${paymentLinkUrl ? `\n\n💳 Pay Online: ${paymentLinkUrl}` : ""}` : "✅ Fully Paid"}\n\n— Shree Umiya Electronics`
+        `🧾 Invoice ${invoiceId}\nTotal: ₹${total.toLocaleString("en-IN")}\nPaid: ₹${data.paidAmount.toLocaleString("en-IN")}\n${status !== "Paid" ? `Balance: ₹${(total - data.paidAmount).toLocaleString("en-IN")}${paymentLinkUrl ? `\n\n💳 Pay Online: ${paymentLinkUrl}` : ""}` : "✅ Fully Paid"}\n\n— DukanOs`
       );
       setTimeout(() => {
         toast("Send to WhatsApp?", {

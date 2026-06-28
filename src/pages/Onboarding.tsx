@@ -66,7 +66,7 @@ export default function Onboarding() {
               <div>
                 <label className="text-xs text-muted-foreground mb-1 block">Store Name *</label>
                 <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  placeholder="e.g., Shree Umiya Electronics"
+                  placeholder="e.g., Patel Kirana Store"
                   className="w-full px-3 py-2.5 rounded-xl bg-card border border-border/50 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50" />
               </div>
               <div>

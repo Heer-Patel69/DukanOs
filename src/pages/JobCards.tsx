@@ -79,7 +79,7 @@ export default function JobCards() {
           customerName: job.customerName,
           customerPhone: job.customerPhone,
           title: `${job.deviceType} Service Follow-up`,
-          message: `Hi ${job.customerName}, your ${job.deviceBrand} ${job.deviceModel} is due for service. — DukaanOS`,
+          message: `Hi ${job.customerName}, your ${job.deviceBrand} ${job.deviceModel} is due for service. — DukanOs`,
           frequency: "biannual",
           nextDueAt: Date.now() + days * 86400000,
           lastServiceDate: Date.now(),
@@ -123,7 +123,7 @@ export default function JobCards() {
 
   const handleSendApproval = useCallback((job: JobCard) => {
     const partsText = job.partsEstimate.map((p) => `• ${p.name}: ₹${p.cost}`).join("\n");
-    const msg = `Hi ${job.customerName},\n\nRepair estimate for your ${job.deviceBrand} ${job.deviceModel}:\n\n${partsText}\nLabor: ₹${job.laborCharge}\n\n*Total: ₹${job.totalEstimate}*\n\nPlease reply YES to approve.\n\n- DukaanOS`;
+    const msg = `Hi ${job.customerName},\n\nRepair estimate for your ${job.deviceBrand} ${job.deviceModel}:\n\n${partsText}\nLabor: ₹${job.laborCharge}\n\n*Total: ₹${job.totalEstimate}*\n\nPlease reply YES to approve.\n\n- DukanOs`;
     const url = `https://wa.me/${job.customerPhone.replace(/[\s+]/g, "")}?text=${encodeURIComponent(msg)}`;
     window.open(url, "_blank");
     updateJob(job.id, {
@@ -444,7 +444,7 @@ function JobCardItem({ job, expanded, onToggle, onUpdateStatus, onUpdateJob, onT
               </button>
             )}
             <a href={`https://wa.me/${job.customerPhone.replace(/[\s+]/g, "")}?text=${encodeURIComponent(
-              `Hi ${job.customerName}, your ${job.deviceBrand} ${job.deviceModel} repair update:\n\nStatus: ${job.status}\n${job.totalEstimate > 0 ? `Estimate: ₹${job.totalEstimate}\n` : ""}${advancePaid > 0 ? `Advance Paid: ₹${advancePaid}\n` : ""}${job.status === "Ready" ? "\nYour device is ready for pickup!" : ""}\n\n- DukaanOS`
+              `Hi ${job.customerName}, your ${job.deviceBrand} ${job.deviceModel} repair update:\n\nStatus: ${job.status}\n${job.totalEstimate > 0 ? `Estimate: ₹${job.totalEstimate}\n` : ""}${advancePaid > 0 ? `Advance Paid: ₹${advancePaid}\n` : ""}${job.status === "Ready" ? "\nYour device is ready for pickup!" : ""}\n\n- DukanOs`
             )}`} target="_blank" rel="noopener noreferrer"
               className="flex-1 gradient-accent rounded-xl py-2 flex items-center justify-center gap-1.5 text-xs font-semibold text-accent-foreground active:scale-[0.97] transition-all">
               <MessageCircle className="h-3.5 w-3.5" /> WhatsApp

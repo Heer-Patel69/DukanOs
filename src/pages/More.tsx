@@ -1,18 +1,19 @@
 import { PageShell } from "@/components/layout/PageShell";
 import { NavLink } from "react-router-dom";
-import { Store, Wallet, Truck, Users, Settings as SettingsIcon, ChevronRight, Wrench, Bell } from "lucide-react";
+import { Wallet, Truck, Users, Settings as SettingsIcon, ChevronRight, Wrench, Bell, BarChart3, Package } from "lucide-react";
 import { useI18n } from "@/hooks/use-i18n";
 
 export default function More() {
   const { t } = useI18n();
 
   const links = [
+    { to: "/customers", icon: Users, label: t("nav.customers"), desc: "Phone & Google contacts" },
+    { to: "/automations", icon: Bell, label: "Reminders", desc: "Auto WhatsApp follow-ups" },
+    { to: "/job-cards", icon: Wrench, label: "Job Cards", desc: "Repair & service tracking" },
+    { to: "/inventory", icon: Package, label: t("nav.inventory"), desc: "Products & stock" },
     { to: "/purchase", icon: Truck, label: t("nav.purchases"), desc: t("more.supplierOrders") },
     { to: "/expenses", icon: Wallet, label: t("nav.expenses"), desc: t("more.trackSpending") },
-    { to: "/customers", icon: Users, label: t("nav.customers"), desc: t("more.crmContacts") },
-    { to: "/online-store", icon: Store, label: t("nav.onlineStore"), desc: t("more.miniStore") },
-    { to: "/job-cards", icon: Wrench, label: "Job Cards", desc: "Repair & service tracking" },
-    { to: "/automations", icon: Bell, label: "Automations", desc: "Reminders & follow-ups" },
+    { to: "/reports", icon: BarChart3, label: t("nav.reports"), desc: "Sales & GST reports" },
     { to: "/settings", icon: SettingsIcon, label: t("nav.settings"), desc: t("more.configuration") },
   ];
 
