@@ -4,7 +4,7 @@ import {
   X, Search, Plus, Minus, Trash2, ArrowRight, ArrowLeft,
   FileText, Send, CheckCircle, Percent, ShoppingBag, Zap, ScanBarcode, Download, IndianRupee
 } from "lucide-react";
-import { useProducts, useSales, useCustomers, usePayments, type Product } from "@/hooks/use-offline-store";
+import { useProducts, useSales, useCustomers, usePayments, useStoreProfile, type Product } from "@/hooks/use-offline-store";
 import { useI18n } from "@/hooks/use-i18n";
 import { VoiceInputButton } from "@/components/ui/VoiceInputButton";
 import { downloadInvoicePDF, generateAndStorePDF } from "@/lib/generate-invoice-pdf";
@@ -25,6 +25,9 @@ export default function QuickBillModal({ open, onClose }: QuickBillModalProps) {
   const { add: addSale } = useSales();
   const { items: customers, add: addCustomer, update: updateCustomer } = useCustomers();
   const { add: addPayment } = usePayments();
+  const { profile } = useStoreProfile();
+  const businessName = profile?.name || "DukanOs Business";
+  const businessLocation = [profile?.address, profile?.city].filter(Boolean).join(", ");
   const barcodeRef = useRef<HTMLInputElement>(null);
   const [barcodeValue, setBarcodeValue] = useState("");
   const [barcodeFeedback, setBarcodeFeedback] = useState<"idle" | "found" | "notfound">("idle");
@@ -34,7 +37,7 @@ export default function QuickBillModal({ open, onClose }: QuickBillModalProps) {
   const [search, setSearch] = useState("");
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
-  const [gstEnabled, setGstEnabled] = useState(true);
+  const [gstEnabled, setGstEnabled] = useState(false);
   const [billDone, setBillDone] = useState(false);
   const [paymentMode, setPaymentMode] = useState<PaymentMode>("full");
   const [partialAmount, setPartialAmount] = useState("");
@@ -118,7 +121,7 @@ export default function QuickBillModal({ open, onClose }: QuickBillModalProps) {
 
   const generateWhatsAppMsg = () => {
     const items = cart.map((i) => `• ${i.name} x${i.qty} — ₹${(i.price * i.qty).toLocaleString("en-IN")}`).join("\n");
-    let msg = `🧾 *Shree Umiya Electronics*\nInvoice: ${invoiceId}\n\nCustomer: ${customerName || "Walk-in"}\n\n${items}\n\nSubtotal: ₹${subtotal.toLocaleString("en-IN")}${gstEnabled ? `\nGST (${GST_RATE}%): ₹${gstAmount.toLocaleString("en-IN")}` : ""}\n*Total: ₹${total.toLocaleString("en-IN")}*`;
+    let msg = `🧾 *${businessName}*\nInvoice: ${invoiceId}\n\nCustomer: ${customerName || "Walk-in"}\n\n${items}\n\nSubtotal: ₹${subtotal.toLocaleString("en-IN")}${gstEnabled ? `\nGST (${GST_RATE}%): ₹${gstAmount.toLocaleString("en-IN")}` : ""}\n*Total: ₹${total.toLocaleString("en-IN")}*`;
 
     if (remaining > 0) {
       msg += `\n\n💰 Paid: ₹${paidAmount.toLocaleString("en-IN")}\n⚠️ *Balance Due: ₹${remaining.toLocaleString("en-IN")}*`;
@@ -539,8 +542,8 @@ export default function QuickBillModal({ open, onClose }: QuickBillModalProps) {
               <motion.div key="step3" variants={stepVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.2 }} className="space-y-4">
                 <div className="glass-strong rounded-2xl p-5 space-y-4" id="invoice-preview">
                   <div className="text-center border-b border-border/50 pb-3">
-                    <h3 className="text-lg font-bold text-foreground font-brand">Shree Umiya Electronics</h3>
-                    <p className="text-[10px] text-muted-foreground">Sargasan, Gandhinagar • Est. 2005</p>
+                    <h3 className="text-lg font-bold text-foreground font-brand">{businessName}</h3>
+                    {businessLocation && <p className="text-[10px] text-muted-foreground">{businessLocation}</p>}
                     <p className="text-[10px] text-muted-foreground mt-1">{invoiceId} • {new Date().toLocaleDateString("en-IN")}</p>
                   </div>
 
