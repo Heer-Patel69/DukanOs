@@ -5,7 +5,7 @@ import {
   ArrowRight, ArrowUpRight, ArrowDownRight, Wallet, BarChart3,
   Clock, CalendarDays, Activity, Sun, Moon, Globe, FileText, Bell,
 } from "lucide-react";
-import umiyaLogo from "@/assets/umiya-logo.png";
+import { useStoreProfile } from "@/hooks/use-offline-store";
 import { useNavigate } from "react-router-dom";
 import { useI18n, type Lang } from "@/hooks/use-i18n";
 import { useTheme } from "@/hooks/use-theme";
