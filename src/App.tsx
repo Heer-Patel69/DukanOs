@@ -15,13 +15,10 @@ import Reports from "./pages/Reports";
 import Customers from "./pages/Customers";
 import Purchase from "./pages/Purchase";
 import Expenses from "./pages/Expenses";
-import OnlineStore from "./pages/OnlineStore";
 import SettingsPage from "./pages/Settings";
 import More from "./pages/More";
 import NotFound from "./pages/NotFound";
-import Stores from "./pages/Stores";
 import JobCards from "./pages/JobCards";
-import PublicStore from "./pages/PublicStore";
 import Auth from "./pages/Auth";
 import Onboarding from "./pages/Onboarding";
 import Automations from "./pages/Automations";
@@ -38,8 +35,6 @@ const App = () => (
           <Routes>
             {/* Marketing website — standalone */}
             <Route path="/" element={<Index />} />
-            <Route path="/stores" element={<Stores />} />
-            <Route path="/store/:slug" element={<PublicStore />} />
             <Route path="/pos" element={<POS />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/onboarding" element={<Onboarding />} />
@@ -52,7 +47,6 @@ const App = () => (
               <Route path="/customers" element={<Customers />} />
               <Route path="/purchase" element={<Purchase />} />
               <Route path="/expenses" element={<Expenses />} />
-              <Route path="/online-store" element={<OnlineStore />} />
               <Route path="/job-cards" element={<JobCards />} />
               <Route path="/automations" element={<Automations />} />
               <Route path="/settings" element={<SettingsPage />} />
