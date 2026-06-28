@@ -3,11 +3,10 @@ import { BottomNav } from "./BottomNav";
 import { ConnectivityDot } from "./ConnectivityDot";
 import {
   LayoutDashboard,
-  ShoppingCart,
+  Receipt,
   Package,
   BarChart3,
   Users,
-  Store,
   Wallet,
   Truck,
   Settings,
@@ -30,25 +29,20 @@ const langOrder: Lang[] = ["en", "hi", "gu"];
 export function AppLayout() {
   const { t, lang, setLang } = useI18n();
   const { theme, toggleTheme } = useTheme();
-  const { user, role, signOut, isConfigured } = useAuth();
+  const { user, signOut } = useAuth();
 
-  const allLinks = [
-    { to: "/dashboard", icon: LayoutDashboard, label: t("nav.dashboard"), roles: ["owner", "cashier", "technician"] },
-    { to: "/sales", icon: ShoppingCart, label: t("nav.sales"), roles: ["owner", "cashier"] },
-    { to: "/inventory", icon: Package, label: t("nav.inventory"), roles: ["owner"] },
-    { to: "/purchase", icon: Truck, label: t("nav.purchases"), roles: ["owner"] },
-    { to: "/expenses", icon: Wallet, label: t("nav.expenses"), roles: ["owner"] },
-    { to: "/customers", icon: Users, label: t("nav.customers"), roles: ["owner", "cashier"] },
-    { to: "/job-cards", icon: Wrench, label: "Job Cards", roles: ["owner", "technician"] },
-    { to: "/online-store", icon: Store, label: t("nav.onlineStore"), roles: ["owner"] },
-    { to: "/reports", icon: BarChart3, label: t("nav.reports"), roles: ["owner"] },
-    { to: "/automations", icon: Bell, label: "Automations", roles: ["owner"] },
-    { to: "/settings", icon: Settings, label: t("nav.settings"), roles: ["owner"] },
+  const sidebarLinks = [
+    { to: "/dashboard", icon: LayoutDashboard, label: t("nav.dashboard") },
+    { to: "/sales", icon: Receipt, label: "Bills" },
+    { to: "/customers", icon: Users, label: t("nav.customers") },
+    { to: "/inventory", icon: Package, label: t("nav.inventory") },
+    { to: "/purchase", icon: Truck, label: t("nav.purchases") },
+    { to: "/expenses", icon: Wallet, label: t("nav.expenses") },
+    { to: "/job-cards", icon: Wrench, label: "Job Cards" },
+    { to: "/reports", icon: BarChart3, label: t("nav.reports") },
+    { to: "/automations", icon: Bell, label: "Reminders" },
+    { to: "/settings", icon: Settings, label: t("nav.settings") },
   ];
-
-  const sidebarLinks = isConfigured
-    ? allLinks.filter(l => l.roles.includes(role))
-    : allLinks;
 
   const cycleLang = () => {
     const idx = langOrder.indexOf(lang);
@@ -71,8 +65,8 @@ export function AppLayout() {
                 <img src={umiyaLogo} alt="" className="relative h-10 w-10 rounded-xl ring-1 ring-white/10" />
               </div>
               <div className="flex-1">
-                <p className="font-brand text-sm tracking-[0.06em] text-sidebar-foreground">SHREE UMIYA</p>
-                <p className="text-[8px] text-sidebar-foreground/30 uppercase tracking-[0.2em]">Electronics</p>
+                <p className="font-brand text-sm tracking-[0.06em] text-sidebar-foreground">DukanOs</p>
+                <p className="text-[8px] text-sidebar-foreground/30 uppercase tracking-[0.2em]">Business OS</p>
               </div>
               <ConnectivityDot />
             </div>
@@ -101,14 +95,14 @@ export function AppLayout() {
 
           {/* Footer with theme + lang + auth toggles */}
           <div className="p-4 border-t border-sidebar-border/30 space-y-2">
-            {isConfigured && user && (
+            {user && (
               <div className="flex items-center gap-2 mb-2 px-1">
                 <div className="h-7 w-7 rounded-lg bg-primary/15 border border-primary/20 flex items-center justify-center text-[10px] font-bold text-primary">
                   {user.email?.[0]?.toUpperCase() || "U"}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-[10px] font-semibold text-sidebar-foreground truncate">{user.email}</p>
-                  <p className="text-[8px] text-sidebar-foreground/40 uppercase">{role}</p>
+                  <p className="text-[8px] text-sidebar-foreground/40 uppercase">Owner</p>
                 </div>
               </div>
             )}
@@ -128,7 +122,7 @@ export function AppLayout() {
                 {langLabels[lang]}
               </button>
             </div>
-            {isConfigured && user && (
+            {user && (
               <button onClick={signOut}
                 className="w-full h-9 glass rounded-xl flex items-center justify-center gap-1.5 text-xs font-medium text-destructive/70 hover:text-destructive transition-colors">
                 <LogOut className="h-3.5 w-3.5" /> Sign Out
