@@ -79,7 +79,7 @@ export default function Customers() {
   const sendReminder = (customer: { name: string; phone: string; balance: number }) => {
     const ph = customer.phone.replace(/\D/g, "");
     const msg = encodeURIComponent(
-      `🙏 नमस्ते ${customer.name} जी,\n\nShree Umiya Electronics से आपका बकाया:\n\n💰 *Pending: ₹${customer.balance.toLocaleString("en-IN")}*\n\nKripya jaldi se payment kar dein. Dhanyavaad! 🙏\n\n— Shree Umiya Electronics\nSargasan, Gandhinagar`
+      `🙏 नमस्ते ${customer.name} जी,\n\nDukanOs से आपका बकाया:\n\n💰 *Pending: ₹${customer.balance.toLocaleString("en-IN")}*\n\nKripya jaldi se payment kar dein. Dhanyavaad! 🙏\n\n— DukanOs\nSargasan, Gandhinagar`
     );
     window.open(ph ? `https://wa.me/91${ph}?text=${msg}` : `https://wa.me/?text=${msg}`, "_blank");
   };

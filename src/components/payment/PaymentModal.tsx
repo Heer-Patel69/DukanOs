@@ -96,7 +96,7 @@ export default function PaymentModal({
   const shareOnWhatsApp = () => {
     if (!paymentLink) return;
     const msg = encodeURIComponent(
-      `🧾 *Shree Umiya Electronics*\n\nHi ${customerName},\n\nPayment of *₹${amount.toLocaleString("en-IN")}* is pending for Invoice ${invoiceId}.\n\n💳 Pay securely here:\n${paymentLink.shortUrl}\n\nLink valid for 7 days.\n\nThank you! 🙏`
+      `🧾 *DukanOs*\n\nHi ${customerName},\n\nPayment of *₹${amount.toLocaleString("en-IN")}* is pending for Invoice ${invoiceId}.\n\n💳 Pay securely here:\n${paymentLink.shortUrl}\n\nLink valid for 7 days.\n\nThank you! 🙏`
     );
     const phone = customerPhone.replace(/\D/g, "");
     window.open(phone ? `https://wa.me/91${phone}?text=${msg}` : `https://wa.me/?text=${msg}`, "_blank");

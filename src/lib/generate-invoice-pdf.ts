@@ -505,7 +505,7 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<jsPDF> {
   doc.setProperties({
     title: "Invoice " + data.invoiceId,
     subject: "Invoice for " + data.customerName,
-    creator: store?.name || "DukaanOS",
+    creator: store?.name || "DukanOs",
   });
 
   return doc;
