@@ -1,25 +1,28 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Mail, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Mail, Lock, ArrowRight } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
 
 export default function Auth() {
+  const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [sent, setSent] = useState(false);
-  const { sendMagicLink } = useAuth();
+  const { signIn, signUp } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const { error } = await sendMagicLink(email);
+    const { error } = mode === "signin"
+      ? await signIn(email, password)
+      : await signUp(email, password);
     setLoading(false);
     if (error) { toast.error(error.message); return; }
-    setSent(true);
-    toast.success("Magic link sent! Check your inbox.");
+    toast.success(mode === "signin" ? "Welcome back!" : "Account created!");
+    navigate("/dashboard");
   };
 
   return (
@@ -46,40 +49,49 @@ export default function Auth() {
           </div>
 
           <div className="glass-strong rounded-2xl p-6 space-y-5">
-            {sent ? (
-              <div className="text-center space-y-3 py-4">
-                <CheckCircle2 className="h-12 w-12 text-brand-success mx-auto" />
-                <h2 className="text-lg font-bold text-foreground">Check your inbox</h2>
-                <p className="text-xs text-muted-foreground">We sent a sign-in link to <strong>{email}</strong>. Open it on this device to continue.</p>
-                <button onClick={() => setSent(false)} className="text-xs text-primary hover:underline">Use a different email</button>
-              </div>
-            ) : (
-              <>
-                <div>
-                  <h2 className="text-lg font-bold text-foreground">Sign in / Sign up</h2>
-                  <p className="text-xs text-muted-foreground mt-1">No passwords. We'll email you a one-tap login link.</p>
-                </div>
+            <div className="flex bg-card/50 rounded-lg p-1 text-xs font-semibold">
+              <button onClick={() => setMode("signin")}
+                className={`flex-1 py-2 rounded-md transition-all ${mode === "signin" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground"}`}>
+                Sign in
+              </button>
+              <button onClick={() => setMode("signup")}
+                className={`flex-1 py-2 rounded-md transition-all ${mode === "signup" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground"}`}>
+                Sign up
+              </button>
+            </div>
 
-                <form onSubmit={handleSubmit} className="space-y-3">
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <input type="email" placeholder="you@business.com" value={email} onChange={(e) => setEmail(e.target.value)} required
-                      className="w-full pl-10 pr-3 py-3 rounded-xl bg-card border border-border/50 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50" />
-                  </div>
-                  <button type="submit" disabled={loading || !email}
-                    className="w-full gradient-accent text-accent-foreground py-3 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 active:scale-[0.98] transition-all disabled:opacity-50">
-                    {loading ? (
-                      <div className="h-4 w-4 rounded-full border-2 border-accent-foreground/30 border-t-accent-foreground animate-spin" />
-                    ) : (
-                      <>Send magic link <ArrowRight className="h-4 w-4" /></>
-                    )}
-                  </button>
-                </form>
-                <p className="text-[10px] text-center text-muted-foreground/60">
-                  By continuing you agree that DukanOs may store your business data securely.
-                </p>
-              </>
-            )}
+            <div>
+              <h2 className="text-lg font-bold text-foreground">
+                {mode === "signin" ? "Welcome back" : "Create your account"}
+              </h2>
+              <p className="text-xs text-muted-foreground mt-1">
+                {mode === "signin" ? "Sign in to manage your dukan." : "Start billing in under a minute."}
+              </p>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-3">
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <input type="email" placeholder="you@business.com" value={email} onChange={(e) => setEmail(e.target.value)} required
+                  className="w-full pl-10 pr-3 py-3 rounded-xl bg-card border border-border/50 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50" />
+              </div>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6}
+                  className="w-full pl-10 pr-3 py-3 rounded-xl bg-card border border-border/50 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50" />
+              </div>
+              <button type="submit" disabled={loading || !email || !password}
+                className="w-full gradient-accent text-accent-foreground py-3 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 active:scale-[0.98] transition-all disabled:opacity-50">
+                {loading ? (
+                  <div className="h-4 w-4 rounded-full border-2 border-accent-foreground/30 border-t-accent-foreground animate-spin" />
+                ) : (
+                  <>{mode === "signin" ? "Sign in" : "Create account"} <ArrowRight className="h-4 w-4" /></>
+                )}
+              </button>
+            </form>
+            <p className="text-[10px] text-center text-muted-foreground/60">
+              By continuing you agree that DukanOs may store your business data securely.
+            </p>
           </div>
 
           <button onClick={() => navigate("/")}

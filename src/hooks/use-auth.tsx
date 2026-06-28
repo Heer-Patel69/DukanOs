@@ -6,7 +6,8 @@ interface AuthState {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  sendMagicLink: (email: string) => Promise<{ error: Error | null }>;
+  signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
+  signUp: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
 }
 
@@ -35,13 +36,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
-  const sendMagicLink = useCallback(async (email: string) => {
-    const { error } = await supabase.auth.signInWithOtp({
+  const signIn = useCallback(async (email: string, password: string) => {
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    return { error: error as Error | null };
+  }, []);
+
+  const signUp = useCallback(async (email: string, password: string) => {
+    const { error } = await supabase.auth.signUp({
       email,
-      options: {
-        emailRedirectTo: `${window.location.origin}/dashboard`,
-        shouldCreateUser: true,
-      },
+      password,
+      options: { emailRedirectTo: `${window.location.origin}/dashboard` },
     });
     return { error: error as Error | null };
   }, []);
@@ -53,7 +57,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, session, loading, sendMagicLink, signOut }}>
+    <AuthContext.Provider value={{ user, session, loading, signIn, signUp, signOut }}>
       {children}
     </AuthContext.Provider>
   );
