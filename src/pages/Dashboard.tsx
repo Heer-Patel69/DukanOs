@@ -41,6 +41,9 @@ export default function Dashboard() {
   const { items: products } = useProducts();
   const { items: customers } = useCustomers();
   const { items: reminders } = useReminders();
+  const { profile } = useStoreProfile();
+  const brandName = (profile?.name || "DukanOs").toUpperCase();
+  const brandInitial = (profile?.name || "D")[0].toUpperCase();
 
   const remindersDueToday = useMemo(() => {
     const now = Date.now();
@@ -97,10 +100,12 @@ export default function Dashboard() {
             <div className="flex items-center gap-3">
               <div className="relative">
                 <div className="absolute inset-0 rounded-xl bg-accent/15 blur-lg scale-150" />
-                <img src={umiyaLogo} alt="Shree Umiya Electronics" className="relative h-10 w-10 rounded-xl ring-1 ring-white/10" />
+                <div className="relative h-10 w-10 rounded-xl ring-1 ring-white/10 gradient-accent flex items-center justify-center text-base font-bold text-accent-foreground">
+                  {brandInitial}
+                </div>
               </div>
               <div>
-                <h1 className="font-brand text-lg tracking-[0.06em] text-foreground">SHREE UMIYA</h1>
+                <h1 className="font-brand text-lg tracking-[0.04em] text-foreground truncate max-w-[180px]">{brandName}</h1>
                 <p className="text-[9px] text-muted-foreground uppercase tracking-[0.2em]">{t("dash.commandCenter")}</p>
               </div>
             </div>
